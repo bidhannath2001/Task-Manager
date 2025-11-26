@@ -1,17 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_management/UI/screens/forget_password_email_verify.dart';
-import 'package:task_management/UI/screens/sign_up_page.dart';
+import 'package:task_management/UI/screens/login_page.dart';
 import 'package:task_management/UI/widgets/screen_background.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Get Stated with",
+                    "Join with us",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
@@ -38,6 +37,30 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   decoration: const InputDecoration(
                     hintText: "Email",
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: "First Name",
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: "Last Name",
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: "Mobile",
                   ),
                 ),
                 const SizedBox(
@@ -61,36 +84,25 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 35,
                 ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const ForgetPasswordEmailVerify()));
-                    },
-                    child: const Text("Forgot Password?")),
                 RichText(
                   text: TextSpan(
-                    text: "Don't have an account? ",
+                    text: "Already have an account? ",
                     style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        color: Colors.black, fontWeight: FontWeight.bold),
                     children: [
                       TextSpan(
-                        text: "Sign up",
-                        style: const TextStyle(
-                          color: Colors.green,
-                        ),
+                        text: "Sign in",
+                        style: const TextStyle(color: Colors.green),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SignUpPage()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginPage(),
+                              ),
+                            );
                           },
-                      ),
+                      )
                     ],
                   ),
                 ),
