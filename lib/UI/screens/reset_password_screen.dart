@@ -1,19 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_management/UI/screens/forget_password_email_verify.dart';
-import 'package:task_management/UI/screens/main_nav_bar_holder_screen.dart';
-import 'package:task_management/UI/screens/new_task_screen.dart';
 import 'package:task_management/UI/screens/sign_up_page.dart';
 import 'package:task_management/UI/widgets/screen_background.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class ResetPasswordScreen extends StatelessWidget {
+  const ResetPasswordScreen({super.key});
 
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,20 +22,18 @@ class _LoginPageState extends State<LoginPage> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Get Stated with",
+                    "Set Password",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 const SizedBox(
-                  height: 25,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: "Email",
-                  ),
-                ),
-                const SizedBox(
                   height: 10,
+                ),
+                Text(
+                  "Password should be more than 6 letters and combination of numbers and letters",
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey,
+                      ),
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
@@ -53,37 +43,37 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 10,
                 ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: "Confirm Password",
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const MainNavBarHolderScreen();
-                        }));
-                      },
-                      child: const Icon(Icons.arrow_forward_ios_rounded),
-                    )),
-                const SizedBox(height: 35),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const ForgetPasswordEmailVerify()));
-                    },
-                    child: const Text("Forgot Password?")),
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () {},
+                    child: const Text(
+                      "Confirm",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
                 RichText(
                   text: TextSpan(
-                    text: "Don't have an account? ",
+                    text: "Have an account? ",
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                     children: [
                       TextSpan(
-                        text: "Sign up",
+                        text: "Sign In",
                         style: const TextStyle(
                           color: Colors.green,
                         ),
