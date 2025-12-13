@@ -45,6 +45,7 @@ class ApiCaller {
 
       //debugging
       _logRequest(url, body: body);
+      
       Response response = await http
           .post(uri, body: body != null ? jsonEncode(body) : null, headers: {
         "Accept": "application/json",

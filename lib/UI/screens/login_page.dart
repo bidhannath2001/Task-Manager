@@ -1,9 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:task_management/UI/controller/auth_controller.dart';
 import 'package:task_management/UI/screens/forget_password_email_verify.dart';
 import 'package:task_management/UI/screens/main_nav_bar_holder_screen.dart';
 import 'package:task_management/UI/screens/sign_up_page.dart';
 import 'package:task_management/UI/widgets/screen_background.dart';
+import 'package:task_management/data/models/user_model.dart';
 import 'package:task_management/data/services/api_caller.dart';
 import 'package:task_management/data/utils/urls.dart';
 
@@ -158,6 +160,9 @@ class _LoginPageState extends State<LoginPage> {
       _signInProgress = false;
     });
     if (response.isSuccess) {
+      UserModel model = UserModel.formJson(response.responseData['data']);
+      String accessToken = response.responseData['token'];
+      await AuthController.saveUserData(model, accessToken);
       _clearForm();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Successfully Logged In'),
