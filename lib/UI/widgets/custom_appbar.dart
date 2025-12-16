@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_management/UI/controller/auth_controller.dart';
 import 'package:task_management/UI/screens/update_profile_screen.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -44,7 +45,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            AuthController.clearUserData();
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/login', (route) => false);
+          },
           icon: const Icon(Icons.logout),
           color: Colors.white,
         )

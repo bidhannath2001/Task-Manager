@@ -8,6 +8,7 @@ class AuthController {
   static String _userModelKey = 'user-data';
   static String? accessToken;
   static UserModel? userModel;
+
   static Future saveUserData(UserModel model, String token) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setString(_accessTokenKey, token);
@@ -15,7 +16,7 @@ class AuthController {
     accessToken = token;
     userModel = model;
   }
-  
+
   static Future getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString(_accessTokenKey);
@@ -23,5 +24,16 @@ class AuthController {
       String? userData = sharedPreferences.getString(_userModelKey);
       userModel = UserModel.formJson(jsonDecode(userData!));
     }
+  }
+
+  static Future<bool> isUserLoggedIn() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString(_accessTokenKey);
+    return token != null;
+  }
+
+  static Future<void> clearUserData() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.clear();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:task_management/UI/controller/auth_controller.dart';
 import 'package:task_management/UI/screens/login_page.dart';
 import 'package:task_management/UI/utils/assets_path.dart';
 import 'package:task_management/UI/widgets/screen_background.dart';
@@ -12,16 +13,20 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  Future<void> navigateToLogin() async {
+  Future<void> navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 2));
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
+    final bool isLoggedIn = await AuthController.isUserLoggedIn();
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, '/navBar');
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    navigateToLogin();
+    navigateToNextScreen();
   }
 
   @override
