@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:task_management/UI/controller/auth_controller.dart';
-import 'package:task_management/UI/screens/login_page.dart';
 import 'package:task_management/UI/utils/assets_path.dart';
 import 'package:task_management/UI/widgets/screen_background.dart';
 
@@ -34,9 +33,10 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: ScreenBackground(
         child: Center(
-          child: SvgPicture.asset(
+          child: Image.asset(
             AssetsPath.logo,
-            height: 50,
+            height: 200,
+            width: 200,
           ),
         ),
       ),

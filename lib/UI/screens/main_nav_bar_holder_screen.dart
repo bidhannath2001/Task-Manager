@@ -15,8 +15,8 @@ class _MainNavBarHolderScreenState extends State<MainNavBarHolderScreen> {
   int _selectedIndex = 0;
   final List<Widget> _screens = [
     const NewTaskScreen(),
-    const CompletedTaskScreen(),
     const ProgressTaskScreen(),
+    const CompletedTaskScreen(),
     const CancelTaskScreen(),
   ];
 
@@ -34,8 +34,8 @@ class _MainNavBarHolderScreenState extends State<MainNavBarHolderScreen> {
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.task), label: "New Task"),
-          NavigationDestination(icon: Icon(Icons.done_all), label: "Completed"),
           NavigationDestination(icon: Icon(Icons.refresh), label: "Progress"),
+          NavigationDestination(icon: Icon(Icons.done_all), label: "Completed"),
           NavigationDestination(icon: Icon(Icons.close), label: "Cancelled"),
         ],
       ),

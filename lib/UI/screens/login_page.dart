@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
       _signInProgress = false;
     });
     if (response.isSuccess) {
-      UserModel model = UserModel.formJson(response.responseData['data']);
+      UserModel model = UserModel.fromJson(response.responseData['data']);
       String accessToken = response.responseData['token'];
       await AuthController.saveUserData(model, accessToken);
       _clearForm();
