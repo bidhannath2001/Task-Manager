@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_management/UI/widgets/custom_appbar.dart';
+import 'package:task_management/UI/widgets/shimmer_loading_widget.dart';
 import 'package:task_management/UI/widgets/snackbar.dart';
 import 'package:task_management/UI/widgets/task_card.dart';
 import 'package:task_management/data/models/task_model.dart';
@@ -51,20 +52,16 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
       appBar: const CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Visibility(
-          visible: _getCompletedTaskProgress == false,
-          replacement: const Center(child: CircularProgressIndicator()),
-          child: ListView.separated(
-            itemCount: _completedTaskList.length,
-            itemBuilder: (context, index) => TaskCard(
-                taskModel: _completedTaskList[index],
-                chipColor: Colors.green,
-                refreshtTaskList: () {
-                  _getAllCompletedTask();
-                }),
-            separatorBuilder: (context, index) => const SizedBox(
-              height: 4,
-            ),
+        child: _getCompletedTaskProgress == true ? ShimmerLoadingWidget() : ListView.separated(
+          itemCount: _completedTaskList.length,
+          itemBuilder: (context, index) => TaskCard(
+              taskModel: _completedTaskList[index],
+              chipColor: Colors.green,
+              refreshtTaskList: () {
+                _getAllCompletedTask();
+              }),
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 4,
           ),
         ),
       ),

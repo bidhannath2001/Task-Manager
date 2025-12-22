@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:task_management/UI/screens/add_new_task_screen.dart';
+import 'package:task_management/UI/widgets/banner_placeholder.dart';
+import 'package:task_management/UI/widgets/content_placeholder.dart';
 import 'package:task_management/UI/widgets/custom_appbar.dart';
+import 'package:task_management/UI/widgets/shimmer_loading_widget.dart';
 import 'package:task_management/UI/widgets/snackbar.dart';
 import 'package:task_management/UI/widgets/task_card.dart';
 import 'package:task_management/UI/widgets/task_count_by_status.dart';
+import 'package:task_management/UI/widgets/title_placeholder.dart';
 import 'package:task_management/data/models/task_model.dart';
 import 'package:task_management/data/models/task_status_count_model.dart';
 import 'package:task_management/data/services/api_caller.dart';
 import 'package:task_management/data/utils/urls.dart';
+import 'package:shimmer/shimmer.dart';
 
 class NewTaskScreen extends StatefulWidget {
   const NewTaskScreen({super.key});
@@ -79,58 +84,56 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: 85,
-              child: Visibility(
-                visible: _getTaskStatusCountProgress == false,
-                replacement: Center(child: CircularProgressIndicator()),
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _taskStatusCountList.length,
-                  itemBuilder: (context, index) {
-                    return TaskCountByStatus(
-                      title: _taskStatusCountList[index].status,
-                      count: _taskStatusCountList[index].count,
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(
-                      width: 4,
-                    );
-                  },
+      body: _getTaskStatusCountProgress == true
+          ? ShimmerLoadingWidget()
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 85,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _taskStatusCountList.length,
+                      itemBuilder: (context, index) {
+                        return TaskCountByStatus(
+                          title: _taskStatusCountList[index].status,
+                          count: _taskStatusCountList[index].count,
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(
+                          width: 4,
+                        );
+                      },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              itemCount: _newTaskList.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(left: 8, right: 8),
-                  child: TaskCard(
-                    taskModel: _newTaskList[index],
-                    chipColor: Colors.blue,
-                    refreshtTaskList: () {
-                      _getAllNewTask();
-                      _getTaskStatusCount();
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: _newTaskList.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(left: 8, right: 8),
+                        child: TaskCard(
+                          taskModel: _newTaskList[index],
+                          chipColor: Colors.blue,
+                          refreshtTaskList: () {
+                            _getAllNewTask();
+                            _getTaskStatusCount();
+                          },
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(
+                        height: 5,
+                      );
                     },
                   ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: 5,
-                );
-              },
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {

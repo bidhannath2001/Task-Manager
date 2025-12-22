@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_management/UI/widgets/custom_appbar.dart';
+import 'package:task_management/UI/widgets/shimmer_loading_widget.dart';
 import 'package:task_management/UI/widgets/snackbar.dart';
 import 'package:task_management/UI/widgets/task_card.dart';
 import 'package:task_management/data/models/task_model.dart';
@@ -51,20 +52,16 @@ class _CancelTaskScreenState extends State<CancelTaskScreen> {
       appBar: const CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Visibility(
-          visible: _getCancelledTaskProgress == false,
-          replacement: const Center(child: CircularProgressIndicator()),
-          child: ListView.separated(
-            itemCount: _cancelledTaskList.length,
-            itemBuilder: (context, index) => TaskCard(
-                taskModel: _cancelledTaskList[index],
-                chipColor: Colors.red,
-                refreshtTaskList: () {
-                  _getAllCancelledTask();
-                }),
-            separatorBuilder: (context, index) => const SizedBox(
-              height: 4,
-            ),
+        child:_getCancelledTaskProgress == true ? ShimmerLoadingWidget() : ListView.separated(
+          itemCount: _cancelledTaskList.length,
+          itemBuilder: (context, index) => TaskCard(
+              taskModel: _cancelledTaskList[index],
+              chipColor: Colors.red,
+              refreshtTaskList: () {
+                _getAllCancelledTask();
+              }),
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 4,
           ),
         ),
       ),
