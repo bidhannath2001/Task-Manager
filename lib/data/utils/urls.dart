@@ -4,8 +4,12 @@ class Urls {
   static String loginUrl = '$_baseUrl/Login';
   static String createTask = '$_baseUrl/createTask';
   static String taskStatusCount = '$_baseUrl/taskStatusCount';
-  static String taskListUrl(String status) => '$_baseUrl/listTaskByStatus/$status';
- 
-  static String changeStatus(String taskId,String status) => '$_baseUrl/updateTaskStatus/$taskId/$status';
+  static String updateProfileUrl = '$_baseUrl/ProfileUpdate';
+
+  static String taskListUrl(String status) =>
+      '$_baseUrl/listTaskByStatus/$status';
+
+  static String changeStatus(String taskId, String status) =>
+      '$_baseUrl/updateTaskStatus/$taskId/$status';
   static String deleteUrl(String taskId) => '$_baseUrl/deleteTask/$taskId';
 }

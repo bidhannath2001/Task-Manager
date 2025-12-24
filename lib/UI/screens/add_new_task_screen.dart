@@ -63,12 +63,23 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
                   height: 20,
                 ),
                 FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      addNewTask();
-                    }
-                  },
-                  child: const Icon(Icons.arrow_forward_ios_rounded),
+                  onPressed: _addTaskProgress
+                      ? null
+                      : () {
+                          if (_formKey.currentState!.validate()) {
+                            addNewTask();
+                          }
+                        },
+                  child: _addTaskProgress
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.arrow_forward_ios_rounded),
                 ),
               ],
             ),

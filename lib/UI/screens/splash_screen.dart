@@ -14,6 +14,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Future<void> navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 2));
+    await AuthController.getUserData();
     final bool isLoggedIn = await AuthController.isUserLoggedIn();
     if (isLoggedIn) {
       Navigator.pushReplacementNamed(context, '/navBar');

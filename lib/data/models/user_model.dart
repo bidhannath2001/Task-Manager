@@ -32,7 +32,8 @@ class UserModel {
       "email": email,
       "firstName": firstName,
       "lastName": lastName,
-      "mobile": mobile
+      "mobile": mobile,
+      "photo": photo
     };
   }
 }
