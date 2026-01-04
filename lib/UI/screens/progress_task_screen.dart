@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:task_management/UI/widgets/banner_placeholder.dart';
-import 'package:task_management/UI/widgets/content_placeholder.dart';
+import 'package:provider/provider.dart';
 import 'package:task_management/UI/widgets/custom_appbar.dart';
 import 'package:task_management/UI/widgets/shimmer_loading_widget.dart';
-import 'package:task_management/UI/widgets/snackbar.dart';
 import 'package:task_management/UI/widgets/task_card.dart';
-import 'package:task_management/UI/widgets/title_placeholder.dart';
-import 'package:task_management/data/models/task_model.dart';
-import 'package:task_management/data/services/api_caller.dart';
-import 'package:task_management/data/utils/urls.dart';
+import 'package:task_management/core/enums/api_state.dart';
+
+import 'package:task_management/providers/task_provider.dart';
 
 class ProgressTaskScreen extends StatefulWidget {
   const ProgressTaskScreen({super.key});
@@ -19,29 +15,9 @@ class ProgressTaskScreen extends StatefulWidget {
 }
 
 class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
-  List<TaskModel> _progressTaskList = [];
-  bool _getprogressTaskProgress = false;
-
   Future<void> _getAllProgressTask() async {
-    setState(() {
-      _getprogressTaskProgress = true;
-    });
-    final ApiResponse response =
-        await ApiCaller.getRequest(url: Urls.taskListUrl('Progress'));
-    setState(() {
-      _getprogressTaskProgress = false;
-    });
-    List<TaskModel> list = [];
-    if (response.isSuccess) {
-      for (Map<String, dynamic> jsonData in response.responseData['data']) {
-        list.add(TaskModel.fromJson(jsonData));
-      }
-    } else {
-      showSnackBarMessage(context, response.errorMessage.toString());
-    }
-    setState(() {
-      _progressTaskList = list;
-    });
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    await taskProvider.fetchTaskByStatus('Progress');
   }
 
   @override
@@ -56,20 +32,22 @@ class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
       appBar: const CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: _getprogressTaskProgress == true
-            ? ShimmerLoadingWidget()
-            : ListView.separated(
-                itemCount: _progressTaskList.length,
-                itemBuilder: (context, index) => TaskCard(
-                    taskModel: _progressTaskList[index],
-                    chipColor: Colors.purple,
-                    refreshtTaskList: () {
-                      _getAllProgressTask();
-                    }),
-                separatorBuilder: (context, index) => const SizedBox(
-                  height: 4,
-                ),
-              ),
+        child: Consumer<TaskProvider>(builder: (context, taskProvider, child) {
+          return taskProvider.taskListState == ApiState.loading
+              ? const ShimmerLoadingWidget()
+              : ListView.separated(
+                  itemCount: taskProvider.progressTask.length,
+                  itemBuilder: (context, index) => TaskCard(
+                      taskModel: taskProvider.progressTask[index],
+                      chipColor: Colors.purple,
+                      refreshtTaskList: () {
+                        _getAllProgressTask();
+                      }),
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 4,
+                  ),
+                );
+        }),
       ),
     );
   }

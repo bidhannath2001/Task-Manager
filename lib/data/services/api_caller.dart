@@ -9,13 +9,14 @@ import 'package:task_management/app.dart';
 
 class ApiCaller {
   static final Logger _logger = Logger();
+  static String? accessToken;
   static Future<ApiResponse> getRequest({required String url}) async {
     try {
       Uri uri = Uri.parse(url);
       //debugging
       _logRequest(url);
       Response response = await http.get(uri, headers: {
-        'token': AuthController.accessToken ?? '',
+        'token': accessToken ?? "",
       });
       //debugging
       _logResponse(url, response);
@@ -62,7 +63,7 @@ class ApiCaller {
           .post(uri, body: body != null ? jsonEncode(body) : null, headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "token": AuthController.accessToken ?? '',
+        "token": accessToken ?? "",
       });
 
       //debugging

@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:task_management/UI/screens/add_new_task_screen.dart';
-import 'package:task_management/UI/widgets/banner_placeholder.dart';
-import 'package:task_management/UI/widgets/content_placeholder.dart';
 import 'package:task_management/UI/widgets/custom_appbar.dart';
 import 'package:task_management/UI/widgets/shimmer_loading_widget.dart';
-import 'package:task_management/UI/widgets/snackbar.dart';
 import 'package:task_management/UI/widgets/task_card.dart';
 import 'package:task_management/UI/widgets/task_count_by_status.dart';
-import 'package:task_management/UI/widgets/title_placeholder.dart';
-import 'package:task_management/data/models/task_model.dart';
-import 'package:task_management/data/models/task_status_count_model.dart';
-import 'package:task_management/data/services/api_caller.dart';
-import 'package:task_management/data/utils/urls.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:task_management/core/enums/api_state.dart';
+import 'package:task_management/providers/task_provider.dart';
 
 class NewTaskScreen extends StatefulWidget {
   const NewTaskScreen({super.key});
@@ -22,118 +16,76 @@ class NewTaskScreen extends StatefulWidget {
 }
 
 class _NewTaskScreenState extends State<NewTaskScreen> {
-  bool _getTaskStatusCountProgress = false;
-  bool _getNewTaskProgress = false;
-  List<TaskStatusCountModel> _taskStatusCountList = [];
-  List<TaskModel> _newTaskList = [];
-
-  Future<void> _getTaskStatusCount() async {
-    setState(() {
-      _getTaskStatusCountProgress = true;
-    });
-    final ApiResponse response =
-        await ApiCaller.getRequest(url: Urls.taskStatusCount);
-    setState(() {
-      _getTaskStatusCountProgress = false;
-    });
-    List<TaskStatusCountModel> list = [];
-
-    if (response.isSuccess) {
-      for (Map<String, dynamic> jsonData in response.responseData['data']) {
-        list.add(TaskStatusCountModel.fromJson(jsonData));
-      }
-    } else {
-      showSnackBarMessage(context, response.errorMessage.toString());
-    }
-    setState(() {
-      _taskStatusCountList = list;
-    });
-  }
-
-  Future<void> _getAllNewTask() async {
-    setState(() {
-      _getNewTaskProgress = true;
-    });
-    final ApiResponse response =
-        await ApiCaller.getRequest(url: Urls.taskListUrl('New'));
-    setState(() {
-      _getNewTaskProgress = false;
-    });
-    List<TaskModel> list = [];
-    if (response.isSuccess) {
-      for (Map<String, dynamic> jsonData in response.responseData['data']) {
-        list.add(TaskModel.fromJson(jsonData));
-      }
-    } else {
-      showSnackBarMessage(context, response.errorMessage.toString());
-    }
-    setState(() {
-      _newTaskList = list;
-    });
+  Future<void> _loadData() async {
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    await Future.wait([
+      taskProvider.fetchTaskStatusCount(),
+      taskProvider.fetchTaskByStatus('New')
+    ]);
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _getTaskStatusCount();
-    _getAllNewTask();
+    _loadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: _getTaskStatusCountProgress == true
-          ? ShimmerLoadingWidget()
-          : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 85,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _taskStatusCountList.length,
-                      itemBuilder: (context, index) {
-                        return TaskCountByStatus(
-                          title: _taskStatusCountList[index].status,
-                          count: _taskStatusCountList[index].count,
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(
-                          width: 4,
-                        );
-                      },
+      body: Consumer<TaskProvider>(builder: (context, taskProvider, child) {
+        return Column(
+          children: [
+            taskProvider.taskCountState == ApiState.loading
+                ? const ShimmerLoadingWidget()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 85,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: taskProvider.taskStatusCountList.length,
+                        itemBuilder: (context, index) {
+                          final counts = taskProvider.taskStatusCountList;
+                          return TaskCountByStatus(
+                            title: counts[index].status,
+                            count: counts[index].count,
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            width: 4,
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: _newTaskList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(left: 8, right: 8),
-                        child: TaskCard(
-                          taskModel: _newTaskList[index],
-                          chipColor: Colors.blue,
-                          refreshtTaskList: () {
-                            _getAllNewTask();
-                            _getTaskStatusCount();
-                          },
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        height: 5,
-                      );
-                    },
-                  ),
-                ),
-              ],
+            Expanded(
+              child: ListView.separated(
+                itemCount: taskProvider.newTask.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(left: 8, right: 8),
+                    child: TaskCard(
+                      taskModel: taskProvider.newTask[index],
+                      chipColor: Colors.blue,
+                      refreshtTaskList: () async {
+                        await _loadData();
+                      },
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 5,
+                  );
+                },
+              ),
             ),
+          ],
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {

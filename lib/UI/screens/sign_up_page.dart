@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:task_management/UI/screens/login_page.dart';
 import 'package:task_management/UI/widgets/screen_background.dart';
-import 'package:task_management/data/services/api_caller.dart';
-import 'package:task_management/data/utils/urls.dart';
+import 'package:task_management/providers/network_provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -11,9 +11,8 @@ class SignUpPage extends StatefulWidget {
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }
-  
+
 class _SignUpPageState extends State<SignUpPage> {
-  
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -200,27 +199,26 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future<void> _signUp() async {
-    setState(() {
-      _signUpInProgress = true;
-    });
-
-    Map<String, dynamic> responseBody = {
-      "email": _emailController.text,
-      "firstName": _firstNameController.text,
-      "lastName": _lastNameController.text,
-      "mobile": _mobileController.text,
-      "password": _passwordController.text,
-    };
-    final ApiResponse response = await ApiCaller.postRequest(
-        url: Urls.registrationUrl, body: responseBody);
-    setState(() {
-      _signUpInProgress = false;
-    });
-    if (response.isSuccess) {
+    final networkProvider =
+        Provider.of<NetworkProvider>(context, listen: false);
+    final result = networkProvider.register(
+        email: _emailController.text.trim(),
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        mobile: _mobileController.text.trim(),
+        password: _passwordController.text);
+    if (result != null) {
       _clearForm();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Successfully Registered'),
         backgroundColor: Colors.green,
+        duration: Duration(seconds: 3),
+      ));
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(networkProvider.errorMessage ?? 'Registration Failed'),
+        backgroundColor: Colors.red,
         duration: Duration(seconds: 3),
       ));
     }
